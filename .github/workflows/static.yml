@@ -1,0 +1,15 @@
+# static.yml - Configuração de deploy para OÁSIS PRO
+build:
+  command: ""          # Nenhum comando, pois é um app HTML puro
+  publish: "/"         # Pasta raiz será publicada
+routes:
+  "/":
+    serve: "index.html"
+    status: 200
+  "/**":
+    serve: "index.html"
+    status: 200
+headers:
+  "/**":
+    - key: "Cache-Control"
+      value: "max-age=0, no-cache, no-store, must-revalidate"
