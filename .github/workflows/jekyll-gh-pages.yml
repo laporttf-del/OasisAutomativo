@@ -1,0 +1,47 @@
+name: Deploy OÁSIS PRO no GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Dispara sempre que houver push na main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout do repositório
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # 2️⃣ Configurar Ruby (necessário para Jekyll)
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+
+      # 3️⃣ Instalar dependências Jekyll (se houver Gemfile)
+      - name: Install Bundler
+        run: |
+          gem install bundler
+          bundle install || echo "Sem Gemfile, pulando bundle install"
+
+      # 4️⃣ Build do site
+      - name: Build site
+        run: |
+          if [ -f "_config.yml" ]; then
+            bundle exec jekyll build
+          else
+            echo "HTML puro detectado, copiando arquivos..."
+            mkdir -p _site
+            cp -r * _site
+          fi
+
+      # 5️⃣ Deploy para GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          user_name: "Fabrício Laporte"
+          user_email: "seuemail@exemplo.com"
